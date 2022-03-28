@@ -1,0 +1,14 @@
+
+
+chromium -> web engine for rendering the UI , full chrome-like web browser
+V8 -> engine that provides capabilities to run , execute JS code in the browser
+Node JS -> we are able to run JS code + provides more features
+
+
+
+
+webpack is used k react js ki sab files ko simple JS me convert kr de or phir hm wo use kr sakin . webpack k bagair hum use nai kr sakty react js ki files due to import not supported
+in other words
+webpack is a module builder and its main purpose is to bundle JS files for usage in the browser.
+
+where as babel is a JS compiler https://babeljs.io/
