@@ -5,6 +5,7 @@ import ViewTitle from '../components/shared/ViewTitle';
 import { fetchChats } from '../actions/chats';
 
 import { useDispatch , useSelector } from 'react-redux';
+import Base from '../layouts/Base';
 
 export default function Home() {
 
@@ -20,7 +21,7 @@ export default function Home() {
     }, [dispatch])
 
     return (
-        
+        <Base>
           <div className="row no-gutters fh">
             <div className="col-3 fh">
               <JoinedChatsList chats={chats} />
@@ -30,6 +31,7 @@ export default function Home() {
                 <AvailableChatsList chats={chats} />
             </div>
           </div>
+        </Base>
         
     )
 }

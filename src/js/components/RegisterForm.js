@@ -2,7 +2,7 @@ import React from 'react'
 import { useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux';
 import {registerUser} from "../actions/auth"
-
+import LoadingView from "../components/shared/LoadingView"
 
 export default function RegisterForm() {
   const {register , handleSubmit} = useForm();
@@ -14,7 +14,11 @@ export default function RegisterForm() {
   }
 
   const error = useSelector(({auth}) => auth.register.error);
+  const isChecking = useSelector(({auth}) => auth.register.isChecking);
 
+  if(isChecking){
+    return <LoadingView />
+  }
 
   return (
     <form onSubmit={handleSubmit(onSubmitForm)} className="centered-container-form">

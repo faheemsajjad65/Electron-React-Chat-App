@@ -20,9 +20,22 @@ export const registerUser = formData => dispatch => {
 
     dispatch({type:"AUTH_REGISTER_INIT"});
     
-    api
+    return api
         .register(formData)
-        .then(_ => dispatch({type:"AUTH_REGISTER_SUCCESS"}))
+        .then(authUser => {
+
+            const userProfile = {
+                uid:authUser.user.uid,
+                username:formData.username,
+                email:formData.email,
+                avatar:formData.avatar,
+                joinchats:[]
+            }
+            
+            api.createUserProfile(userProfile);
+
+            // dispatch({type:"AUTH_REGISTER_SUCCESS", user:{}})
+        })
         .catch(error => dispatch({type: 'AUTH_REGISTER_ERROR', error}));
 }
 
@@ -30,11 +43,11 @@ export const loginUser = formData => dispatch => {
 
     dispatch({type:"AUTH_LOGIN_INIT"});
     
-    api
+    return api
         .login(formData)
-        .then(_ => dispatch({type: "AUTH_LOGIN_SUCCESS"}))
+        // .then(_ => dispatch({type: "AUTH_LOGIN_SUCCESS" , user : {}}))
         .catch(error => {
-            dispatch({type: 'AUTH_LOGIN_ERROR', error})
+            dispatch({type: "AUTH_LOGIN_ERROR", error})
         })
 }
 
@@ -54,7 +67,6 @@ export const listenToAuthChanges = () => dispatch => {
         }
     })
 }
-
 
 export const logout = () => dispatch =>{
     api

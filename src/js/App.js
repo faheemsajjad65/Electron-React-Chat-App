@@ -15,20 +15,30 @@ import Home from './views/Home';
 import {
   HashRouter as Router,
   Routes,
-  Route
+  Route,
+  Navigate
 } from 'react-router-dom';
-import Navbar from './components/Navbar';
-import Login from './views/Login';
-import Register from './views/Register';
+// import Navbar from './components/Navbar';
+// import Login from './views/Login';
+// import Register from './views/Register';
 import Settings from './views/Settings';
 import Chat from './views/Chat';
 import Welcome from './views/Welcome';
 import { listenToAuthChanges } from './actions/auth';
 
-import {Provider} from 'react-redux';
+import {Provider, useDispatch,useSelector} from 'react-redux';
 import configureStore from './store/index';
+import LoadingView from "./components/shared/LoadingView"
 
-function App(){
+
+function Authenticate({children}){
+  const user= useSelector(({auth}) => auth.user);
+  return (
+    user? children: <Navigate to="/" />
+  )
+}
+
+function ChatApp(){
     // const title = "hello faheem sajjad";
     // const enhancedTitle = title + '- React!';
     
@@ -40,35 +50,48 @@ function App(){
         
     // )
 
-    const store = configureStore();
-
-    // const dispatch = useDispatch();
-
-    useEffect(()=>{
-      store.dispatch(listenToAuthChanges())
-    },[]);
-
+    
     
 
-    return (
-        <Provider store={store}>
-          <Router>
-            <Navbar />
-            <div className='content-wrapper'>
-              <Routes>
-                <Route path="/" element={<Welcome />} />
-                <Route path="/home" element={<Home />} />
-                <Route path="/chat/:id" element={<Chat />} />
-                <Route path="/settings" element={<Settings />} />
-                
+    const dispatch = useDispatch();
 
-                {/* <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} /> */}
-              </Routes>
-            </div>
-          </Router>
-        </Provider>
+    useEffect(()=>{
+      dispatch(listenToAuthChanges())
+    },[dispatch]);
+
+    const ContentWrapper = ({children}) => <div className='content-wrapper'>{children}</div>
+
+    const isChecking = useSelector(({auth}) => auth.isChecking);
+    if(isChecking){
+      return <LoadingView />
+    }
+
+    return (
+        <Router>
+          {/* <Navbar /> */}
+          <ContentWrapper>
+            <Routes>
+              <Route path="/" element={ <Welcome />} />
+              <Route path="/home" element={<Authenticate> <Home /> </Authenticate>} />
+              <Route path="/chat/:id" element={<Authenticate> <Chat /> </Authenticate>} />
+              <Route path="/settings" element={<Authenticate> <Settings /> </Authenticate>} />
+              
+              {/* <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} /> */}
+              
+            </Routes>
+          </ContentWrapper>
+        </Router>
       )
+}
+
+const store = configureStore();
+function App(){
+  return (
+    <Provider store={store}>
+      <ChatApp />
+    </Provider>
+  )
 }
 
 export default App;
