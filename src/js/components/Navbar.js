@@ -3,7 +3,7 @@ import { useDispatch , useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { logout } from '../api/auth';
 
-export default function Navbar({canGoBack}) {
+export default function Navbar(props) {
 
   const navigate = useNavigate();
 
@@ -14,8 +14,12 @@ export default function Navbar({canGoBack}) {
     <div className="chat-navbar">
         <nav className="chat-navbar-inner">
             <div className="chat-navbar-inner-left">
-            {canGoBack && <button onClick={() => navigate(-1)} className='btn btn-outline-primary' >Back</button>}
-            <Link to="/settings" className="btn btn-outline-success ml-2">Settings</Link>
+            {props.canGoBack && <button onClick={() => navigate(-1)} className='btn btn-outline-primary' >Back</button>}
+            {
+              props.view != 'Settings' && 
+              <Link to="/settings" className="btn btn-outline-success ml-2">Settings</Link>
+            }
+            
             </div>
             <div className="chat-navbar-inner-right">
             
