@@ -42,7 +42,7 @@ export const listenToAuthChanges = () => dispatch => {
 
     dispatch({type:"AUTH_ON_INIT"});
     
-    api.onAuthStateChange(async authUser => {
+    return api.onAuthStateChange(async authUser => {
         if(authUser){
             const userProfile = await api.userProfile(authUser.uid);
             dispatch({type:"AUTH_ON_SUCCESS",user:userProfile});
@@ -55,11 +55,12 @@ export const listenToAuthChanges = () => dispatch => {
     })
 }
 
-export const logout = () => dispatch =>{
+export const logout = () => dispatch => {
     api
         .logout()
-        .then(_ => dispatch({ // We dn care what is in response 
-            type:"AUTH_LOGOUT_SUCCESS"
-        }));
+        .then(_ => {
+            dispatch({ type:"AUTH_LOGOUT_SUCCESS"})
+            dispatch({ type:"CHATS_FETCH_CLEAR"})
+        });
 }
 

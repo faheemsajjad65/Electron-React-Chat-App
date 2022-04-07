@@ -25,10 +25,12 @@ import Settings from './views/Settings';
 import Chat from './views/Chat';
 import Welcome from './views/Welcome';
 import { listenToAuthChanges } from './actions/auth';
-
+import { listenToConnectionChanges } from "./actions/app"
 import {Provider, useDispatch,useSelector} from 'react-redux';
 import configureStore from './store/index';
 import LoadingView from "./components/shared/LoadingView"
+import CreateChat from './views/CreateChat';
+
 
 
 function Authenticate({children}){
@@ -49,19 +51,33 @@ function ChatApp(){
     //     </>
         
     // )
-
-    
     
 
     const dispatch = useDispatch();
 
     useEffect(()=>{
-      dispatch(listenToAuthChanges())
+      const unsubAuthListener = dispatch(listenToAuthChanges());
+      const unSubConnection = dispatch(listenToConnectionChanges());
+      
+      return () => {
+        unsubAuthListener();
+        unSubConnection();
+      }
+
     },[dispatch]);
 
     const ContentWrapper = ({children}) => <div className='content-wrapper'>{children}</div>
 
     const isChecking = useSelector(({auth}) => auth.isChecking);
+    const isOnline = useSelector(({app}) => app.isOnline);
+
+    if(!isOnline){
+      return <LoadingView message="Application has bee disconnected from the internet." />
+    }
+
+
+
+
     if(isChecking){
       return <LoadingView />
     }
@@ -75,6 +91,7 @@ function ChatApp(){
               <Route path="/home" element={<Authenticate> <Home /> </Authenticate>} />
               <Route path="/chat/:id" element={<Authenticate> <Chat /> </Authenticate>} />
               <Route path="/settings" element={<Authenticate> <Settings /> </Authenticate>} />
+              <Route path="/createChat" element={<Authenticate> <CreateChat /> </Authenticate>} />
               
               {/* <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} /> */}
