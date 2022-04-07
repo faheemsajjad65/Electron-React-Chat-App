@@ -30,6 +30,7 @@ import {Provider, useDispatch,useSelector} from 'react-redux';
 import configureStore from './store/index';
 import LoadingView from "./components/shared/LoadingView"
 import CreateChat from './views/CreateChat';
+import { checkUserConnection } from './actions/connection';
 
 
 
@@ -52,24 +53,35 @@ function ChatApp(){
         
     // )
     
-
     const dispatch = useDispatch();
+    const user = useSelector(({auth}) => auth.user);
+    const isChecking = useSelector(({auth}) => auth.isChecking);
+    const isOnline = useSelector(({app}) => app.isOnline);
+    
 
     useEffect(()=>{
       const unsubAuthListener = dispatch(listenToAuthChanges());
       const unSubConnection = dispatch(listenToConnectionChanges());
-      
       return () => {
         unsubAuthListener();
         unSubConnection();
       }
-
     },[dispatch]);
+
+
+    useEffect(() => {
+      let unSubUserConnection;
+      if(user?.uid){
+        unSubUserConnection = dispatch(checkUserConnection(user.uid))
+      }
+      return () => {
+        unSubUserConnection && unSubUserConnection();
+      }
+    },[dispatch,user])
 
     const ContentWrapper = ({children}) => <div className='content-wrapper'>{children}</div>
 
-    const isChecking = useSelector(({auth}) => auth.isChecking);
-    const isOnline = useSelector(({app}) => app.isOnline);
+    
 
     if(!isOnline){
       return <LoadingView message="Application has bee disconnected from the internet." />

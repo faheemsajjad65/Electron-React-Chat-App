@@ -1,5 +1,5 @@
 // import React from 'react';
-import db from '../db/firestore';
+import { fs } from '../db/firestore';
 import firebase from 'firebase/app';
 
 const extractSnapshotData = snapshot => {
@@ -7,27 +7,27 @@ const extractSnapshotData = snapshot => {
 }
 
 export const fetchChats = () =>
-  db
+  fs
     .collection('chats')
     .get()
     .then(extractSnapshotData)
 
 export const createChat = formData => 
-  db
+  fs
     .collection('chats')
     .add(formData)
     .then(docRef => docRef.id)
 
 export const joinChat = async (userId , chatId) => {
-  const userRef = db.doc(`profiles/${userId}`);
-  const chatRef = db.doc(`chats/${chatId}`);
+  const userRef = fs.doc(`profiles/${userId}`);
+  const chatRef = fs.doc(`chats/${chatId}`);
 
   await userRef.update({joinchats:firebase.firestore.FieldValue.arrayUnion(chatRef)});
   await chatRef.update({joinUsers:firebase.firestore.FieldValue.arrayUnion(userRef)})
 }
 
 export const subscribeToChat = (chatId , onSubscribe) => 
-  db
+  fs
     .collection("chats")
     .doc(chatId)
     .onSnapshot(snapshot => {
@@ -36,7 +36,7 @@ export const subscribeToChat = (chatId , onSubscribe) =>
     })
 
 export const subscribeToProfile = (uid , onSubscribe) => 
-  db
+  fs
     .collection("profiles")
     .doc(uid)
     .onSnapshot(snapshot => onSubscribe(snapshot.data()))

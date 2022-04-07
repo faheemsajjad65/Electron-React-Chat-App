@@ -1,24 +1,21 @@
-import firebase from 'firebase/app'
-import 'firebase/auth';
-import db from '../db/firestore';
+import { fs , auth } from '../db/firestore';
 
 
 export const createUserProfile = userProfileData => 
-    db
+    fs
         .collection("profiles")
         .doc(userProfileData.uid)
         .set(userProfileData)
 
 export const userProfile = uid => 
-    db
+    fs
         .collection("profiles") 
         .doc(uid)
         .get()
         .then(snapshot => snapshot.data());
 
 export const register = props => {
-    return firebase
-        .auth()
+    return auth
         .createUserWithEmailAndPassword(props.email, props.password)
         .then(async ({user}) => {
             const userProfileMeta = {
@@ -46,13 +43,12 @@ export const register = props => {
     // return userProfileMeta;
 }
 
-export const onAuthStateChange = onAuth => firebase.auth().onAuthStateChanged(onAuth)
+export const onAuthStateChange = onAuth => auth.onAuthStateChanged(onAuth)
 
-export const logout = () => firebase.auth().signOut();
+export const logout = () => auth.signOut();
 
 export const login = props => {
-    return firebase
-        .auth()
+    return auth
         .signInWithEmailAndPassword(props.email,props.password)
         .then(async ({user}) => {
             const userMeta = await userProfile(user.uid);
@@ -61,7 +57,7 @@ export const login = props => {
         .catch(err => {
             throw new Error(err);
         })
-    // const { user } = await firebase.auth().signInWithEmailAndPassword(props.email,props.password);
+    // const { user } = await auth.signInWithEmailAndPassword(props.email,props.password);
     // const userMeta = await userProfile(user.uid);
     // return userMeta;
 }
