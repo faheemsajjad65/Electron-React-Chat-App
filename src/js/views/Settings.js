@@ -1,7 +1,22 @@
 import React from 'react'
 import {withBaseLayout} from '../layouts/Base'
+import { updateSettings } from "../actions/settings"
+import { useDispatch, useSelector } from 'react-redux'
 
 function Settings() {
+
+  const dispatch = useDispatch();
+  const {
+    isDarkTheme,
+    playSound,
+    showNotifications
+  } = useSelector(({settings}) => settings);
+  
+  const handleChange = ({target:{checked,name}}) => {
+    dispatch(updateSettings(name , checked))
+  }
+
+
   return (
     <div className="centered-view">
       <div className="centered-container">
@@ -11,6 +26,8 @@ function Settings() {
             <div className="my-3">
               <div className="form-check">
                 <input
+                  checked={isDarkTheme}
+                  onChange={handleChange}
                   name="isDarkTheme"
                   type="checkbox"
                   className="form-check-input" />
@@ -18,6 +35,8 @@ function Settings() {
               </div>
               <div className="form-check">
                 <input
+                  checked={showNotifications}
+                  onChange={handleChange}
                   name="showNotifications"
                   type="checkbox"
                   className="form-check-input" />
@@ -25,6 +44,8 @@ function Settings() {
               </div>
               <div className="form-check">
                 <input
+                  checked={playSound}
+                  onChange={handleChange}
                   name="playSound"
                   type="checkbox"
                   className="form-check-input" />
@@ -33,7 +54,7 @@ function Settings() {
             </div>
             <button
               type="button"
-              onClick={() => {}}
+              onClick={() => electron.appApi.quitApp()}
               className="btn btn-danger">
               Quit App
             </button>

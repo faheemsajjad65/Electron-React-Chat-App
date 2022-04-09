@@ -3,7 +3,8 @@ import thunkMiddleware from 'redux-thunk';
 import chatReducer from '../reducers/chats';
 import authReducer from "../reducers/auth";
 import appReducer from "../reducers/app";
-import appMiddleware from "./middlewares/app"
+import appMiddleware from "./middlewares/app";
+import settingsReducer from "../reducers/settings"
 
 
 
@@ -18,7 +19,8 @@ export default function configureStore(){
             {
                 chats:chatReducer,
                 auth:authReducer,
-                app:appReducer
+                app:appReducer,
+                settings:settingsReducer
             }
         ),
         applyMiddleware(

@@ -31,6 +31,7 @@ import configureStore from './store/index';
 import LoadingView from "./components/shared/LoadingView"
 import CreateChat from './views/CreateChat';
 import { checkUserConnection } from './actions/connection';
+import { loadInitialSettings } from './actions/settings';
 
 
 
@@ -57,11 +58,16 @@ function ChatApp(){
     const user = useSelector(({auth}) => auth.user);
     const isChecking = useSelector(({auth}) => auth.isChecking);
     const isOnline = useSelector(({app}) => app.isOnline);
+
     
 
-    useEffect(()=>{
+    useEffect(() => {
+
+      dispatch(loadInitialSettings());
+
       const unsubAuthListener = dispatch(listenToAuthChanges());
       const unSubConnection = dispatch(listenToConnectionChanges());
+
       return () => {
         unsubAuthListener();
         unSubConnection();
@@ -79,7 +85,14 @@ function ChatApp(){
       }
     },[dispatch,user])
 
-    const ContentWrapper = ({children}) => <div className='content-wrapper'>{children}</div>
+    const ContentWrapper = ({children}) =>
+    {
+      const isDarkTheme = useSelector(({settings}) => settings.isDarkTheme)
+
+      return (
+        <div className={`content-wrapper ${isDarkTheme ? 'dark':''}`}>{children}</div>
+      )
+    } 
 
     
 
